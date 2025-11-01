@@ -1,0 +1,22 @@
+[2025-10-23T18:18:54.413+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-23T18:18:54.457+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: pdf_etl_local.embed manual__2025-10-23T18:18:44+00:00 [queued]>
+[2025-10-23T18:18:54.466+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: pdf_etl_local.embed manual__2025-10-23T18:18:44+00:00 [queued]>
+[2025-10-23T18:18:54.466+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-10-23T18:18:54.479+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): embed> on 2025-10-23 18:18:44+00:00
+[2025-10-23T18:18:54.494+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=2469) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-10-23T18:18:54.495+0000] {standard_task_runner.py:63} INFO - Started process 2471 to run task
+[2025-10-23T18:18:54.493+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'pdf_etl_local', 'embed', 'manual__2025-10-23T18:18:44+00:00', '--job-id', '92', '--raw', '--subdir', 'DAGS_FOLDER/pdf_etl_dag.py', '--cfg-path', '/tmp/tmpwlywfp2e']
+[2025-10-23T18:18:54.496+0000] {standard_task_runner.py:91} INFO - Job 92: Subtask embed
+[2025-10-23T18:18:54.562+0000] {task_command.py:426} INFO - Running <TaskInstance: pdf_etl_local.embed manual__2025-10-23T18:18:44+00:00 [running]> on host e709f7fd4db6
+[2025-10-23T18:18:54.678+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='local' AIRFLOW_CTX_DAG_ID='pdf_etl_local' AIRFLOW_CTX_TASK_ID='embed' AIRFLOW_CTX_EXECUTION_DATE='2025-10-23T18:18:44+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-23T18:18:44+00:00'
+[2025-10-23T18:18:54.679+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-23T18:18:54.709+0000] {embedder.py:21} INFO - Embeddings exist, skipping: /opt/***/data/embeddings/36356063541a576483e295cfb35120d8a97ac612.parquet
+[2025-10-23T18:18:54.710+0000] {embedder.py:21} INFO - Embeddings exist, skipping: /opt/***/data/embeddings/acad837e1ac979654de2497e802276d21e57e82c.parquet
+[2025-10-23T18:18:54.710+0000] {embedder.py:21} INFO - Embeddings exist, skipping: /opt/***/data/embeddings/0ea33633ce5afcf7b8bdd0bab2cc9c5d02ec5f56.parquet
+[2025-10-23T18:18:54.710+0000] {embedder.py:21} INFO - Embeddings exist, skipping: /opt/***/data/embeddings/40268da701fce6511cd8145bd0abec68734c19b2.parquet
+[2025-10-23T18:18:54.711+0000] {python.py:237} INFO - Done. Returned value was: ['/opt/***/data/embeddings/36356063541a576483e295cfb35120d8a97ac612.parquet', '/opt/***/data/embeddings/acad837e1ac979654de2497e802276d21e57e82c.parquet', '/opt/***/data/embeddings/0ea33633ce5afcf7b8bdd0bab2cc9c5d02ec5f56.parquet', '/opt/***/data/embeddings/40268da701fce6511cd8145bd0abec68734c19b2.parquet']
+[2025-10-23T18:18:54.711+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-23T18:18:54.740+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=pdf_etl_local, task_id=embed, run_id=manual__2025-10-23T18:18:44+00:00, execution_date=20251023T181844, start_date=20251023T181854, end_date=20251023T181854
+[2025-10-23T18:18:54.789+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-23T18:18:54.836+0000] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-10-23T18:18:54.837+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

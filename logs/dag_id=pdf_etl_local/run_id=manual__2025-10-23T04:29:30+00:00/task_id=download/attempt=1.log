@@ -1,0 +1,19 @@
+[2025-10-23T04:29:33.792+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-23T04:29:33.843+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: pdf_etl_local.download manual__2025-10-23T04:29:30+00:00 [queued]>
+[2025-10-23T04:29:33.854+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: pdf_etl_local.download manual__2025-10-23T04:29:30+00:00 [queued]>
+[2025-10-23T04:29:33.854+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-10-23T04:29:33.872+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): download> on 2025-10-23 04:29:30+00:00
+[2025-10-23T04:29:33.885+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'pdf_etl_local', 'download', 'manual__2025-10-23T04:29:30+00:00', '--job-id', '57', '--raw', '--subdir', 'DAGS_FOLDER/pdf_etl_dag.py', '--cfg-path', '/tmp/tmp2pg336iz']
+[2025-10-23T04:29:33.888+0000] {standard_task_runner.py:91} INFO - Job 57: Subtask download
+[2025-10-23T04:29:33.890+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=280) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-10-23T04:29:33.890+0000] {standard_task_runner.py:63} INFO - Started process 282 to run task
+[2025-10-23T04:29:33.947+0000] {task_command.py:426} INFO - Running <TaskInstance: pdf_etl_local.download manual__2025-10-23T04:29:30+00:00 [running]> on host d5c539fb648f
+[2025-10-23T04:29:34.072+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='local' AIRFLOW_CTX_DAG_ID='pdf_etl_local' AIRFLOW_CTX_TASK_ID='download' AIRFLOW_CTX_EXECUTION_DATE='2025-10-23T04:29:30+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-23T04:29:30+00:00'
+[2025-10-23T04:29:34.073+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-23T04:29:34.115+0000] {downloader.py:20} INFO - Exists, skipping: /opt/***/data/raw/c6720d71ee6e9f0034512b7fed99787027f23f70.pdf
+[2025-10-23T04:29:34.116+0000] {python.py:237} INFO - Done. Returned value was: ['/opt/***/data/raw/c6720d71ee6e9f0034512b7fed99787027f23f70.pdf']
+[2025-10-23T04:29:34.116+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-23T04:29:34.143+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=pdf_etl_local, task_id=download, run_id=manual__2025-10-23T04:29:30+00:00, execution_date=20251023T042930, start_date=20251023T042933, end_date=20251023T042934
+[2025-10-23T04:29:34.185+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-23T04:29:34.230+0000] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-10-23T04:29:34.231+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

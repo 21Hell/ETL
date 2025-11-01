@@ -1,0 +1,20 @@
+[2025-10-23T04:37:23.346+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-23T04:37:23.389+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: pdf_etl_local.chunk manual__2025-10-23T04:37:17.779405+00:00 [queued]>
+[2025-10-23T04:37:23.398+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: pdf_etl_local.chunk manual__2025-10-23T04:37:17.779405+00:00 [queued]>
+[2025-10-23T04:37:23.398+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-10-23T04:37:23.411+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): chunk> on 2025-10-23 04:37:17.779405+00:00
+[2025-10-23T04:37:23.425+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'pdf_etl_local', 'chunk', 'manual__2025-10-23T04:37:17.779405+00:00', '--job-id', '62', '--raw', '--subdir', 'DAGS_FOLDER/pdf_etl_dag.py', '--cfg-path', '/tmp/tmpc7dri3ju']
+[2025-10-23T04:37:23.428+0000] {standard_task_runner.py:91} INFO - Job 62: Subtask chunk
+[2025-10-23T04:37:23.429+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=496) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-10-23T04:37:23.429+0000] {standard_task_runner.py:63} INFO - Started process 498 to run task
+[2025-10-23T04:37:23.480+0000] {task_command.py:426} INFO - Running <TaskInstance: pdf_etl_local.chunk manual__2025-10-23T04:37:17.779405+00:00 [running]> on host d5c539fb648f
+[2025-10-23T04:37:23.579+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='local' AIRFLOW_CTX_DAG_ID='pdf_etl_local' AIRFLOW_CTX_TASK_ID='chunk' AIRFLOW_CTX_EXECUTION_DATE='2025-10-23T04:37:17.779405+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-23T04:37:17.779405+00:00'
+[2025-10-23T04:37:23.580+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-23T04:37:26.117+0000] {chunker.py:35} INFO - Chunked /opt/***/data/raw/36356063541a576483e295cfb35120d8a97ac612.pdf -> /opt/***/data/chunks/36356063541a576483e295cfb35120d8a97ac612.parquet (117 chunks)
+[2025-10-23T04:37:29.092+0000] {chunker.py:35} INFO - Chunked /opt/***/data/raw/acad837e1ac979654de2497e802276d21e57e82c.pdf -> /opt/***/data/chunks/acad837e1ac979654de2497e802276d21e57e82c.parquet (53 chunks)
+[2025-10-23T04:37:29.093+0000] {python.py:237} INFO - Done. Returned value was: ['/opt/***/data/chunks/36356063541a576483e295cfb35120d8a97ac612.parquet', '/opt/***/data/chunks/acad837e1ac979654de2497e802276d21e57e82c.parquet']
+[2025-10-23T04:37:29.093+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-23T04:37:29.134+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=pdf_etl_local, task_id=chunk, run_id=manual__2025-10-23T04:37:17.779405+00:00, execution_date=20251023T043717, start_date=20251023T043723, end_date=20251023T043729
+[2025-10-23T04:37:29.188+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-23T04:37:29.239+0000] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-10-23T04:37:29.242+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
