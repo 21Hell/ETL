@@ -1,132 +1,149 @@
-# ETL (PDF → Chunks → Embeddings → Qdrant) — Documentación en Español
- [![Release](https://img.shields.io/badge/release-v0.1.0-blue.svg)](https://github.com/21Hell/ETL/releases)
 
-Este repositorio contiene una canalización ETL diseñada para ejecutarse localmente (on‑prem) usando Docker Compose y Apache Airflow. El flujo principal:
+# ETL — Pipeline de ingestión y RAG UI
 
-- Descargar PDFs (o consumir una librería local)
-- Extraer texto y dividir en chunks
-- Generar embeddings para cada chunk
-- Subir (upsert) los vectores a Qdrant (vector DB)
+Resumen
+-------
+Este repositorio implementa un pipeline ETL para documentos (PDF/EPUB), generación de chunks, cálculo de embeddings y carga en Qdrant. Además incluye una pequeña aplicación RAG (FastAPI) con una UI web (3 columnas) para búsqueda semántica, visualización de fragmentos y generación de respuestas con LLMs (Ollama, Deepseek, OpenAI).
 
-Objetivo: mantener todos los datos y servicios localmente, sin depender de servicios en la nube.
+Contenido clave
+---------------
+- `src/etl/` — módulos ETL (chunking, utilidades)
+- `src/tools/ingest_books.py` — script para ingestar libros (soporta `--file`, `--dry-run`)
+- `src/tools/rag_chat.py` — FastAPI app: `/api/search`, `/api/chat`, `/api/point/{id}`, `/api/llm_status`, `/ui`
+- `static/` — frontend (HTML/JS) con 3 columnas: Search | Related vectors | RAG output
+- `data/raw/` — documentos fuente
+- `data/chunks/` — resultados chunk/parquet
+- `data/qdrant/` — volumen persistente para Qdrant (si se usa local)
+- `podman-compose.yml` — orquestación (si está presente)
 
-## Estructura principal
+Requisitos (local)
+------------------
+- Python 3.10+ recomendado
+- Podman (para ejecutar Qdrant y/o la pila)
+- Opcional: `ollama` instalado si piensas usar Ollama local
+- Acceso a internet para descargar modelos (sentence-transformers) la primera vez
 
-Raíz del proyecto (resumen):
-
-```
-ETL/
-├─ docker-compose.yml         # Orquestación de servicios (Airflow, Postgres, Redis, Qdrant)
-├─ dags/pdf_etl_dag.py        # Definición del DAG de Airflow
-├─ config/settings.yaml       # Parámetros (rutas, qdrant, chunking)
-├─ src/etl/                   # Código del pipeline (download, chunk, embed, load)
-│  ├─ downloader.py
-│  ├─ chunker.py
-│  ├─ embedder.py
-│  ├─ loader_qdrant.py
-│  └─ utils.py
-├─ src/tools/                 # Scripts y servidores auxiliares (ingest_one, rag_chat, visual_server)
-├─ data/                      # Almacenamiento local (raw, chunks, embeddings)
-├─ requirements/              # Requisitos pip (airflow, dev)
-├─ urls.txt                   # Lista de URLs de ejemplo para descarga
-└─ tests/                     # Tests unitarios (pytest)
-```
-
-## Requisitos (resumen)
-
-- Docker & Docker Compose (para ejecutar la pila Airflow + Qdrant localmente)
-- Python 3.10+ (para desarrollo local / ejecutar scripts fuera de contenedores)
-- Las dependencias Python están en `requirements/airflow.txt` y `requirements/dev.txt`.
-
-Nota: Airflow y sus dependencias son pesadas; para desarrollo rápido puede ejecutarse solo los scripts Python sin arrancar los contenedores.
-
-## Cómo ejecutar (opciones)
-
-1) Ejecutar todo con Docker Compose (recomendado para reproducibilidad)
-
-- Precondiciones: Docker y Docker Compose instalados.
-- Generar clave Fernet para Airflow y exportarla en `.env` (ver `DOCS.md` para ejemplos).
-
-Ejemplo (bash):
-
-```bash
-cd /home/cwolf/Documents/ETL
-# inicializar Airflow (configura imágenes/volúmenes)
-docker compose up -d airflow-init
-# arrancar todos los servicios
-docker compose up -d
-```
-
-Acceso a UI de Airflow: http://localhost:8080 (credenciales por defecto en la configuración local).
-
-2) Ejecutar partes localmente (sin Docker)
-
-Esto es útil para desarrollo o tests rápidos. Requiere pip packages locales.
-
-Crear y activar entorno virtual:
-
+Instalación local (rápida)
+--------------------------
+1. Crear y activar entorno virtual (desde la raíz del repo):
 ```bash
 python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements/dev.txt
+. .venv/bin/activate
+pip install -U pip
 ```
 
-Ejecutar tests unitarios:
-
+2. Instalar dependencias mínimas (si no existe `requirements.txt`):
 ```bash
-pytest -q
+.venv/bin/pip install fastapi uvicorn qdrant-client==1.11.0 sentence-transformers \
+		pdfminer.six ebooklib requests deepseek
 ```
 
-Ejecutar un ingreso de archivo único (end-to-end, útil para testear un PDF local):
-
+Levantar Qdrant con Podman (local, persistente)
+----------------------------------------------
 ```bash
-python -m src.tools.ingest_one /ruta/a/tu/archivo.pdf --settings config/settings.yaml
+# crear carpeta de almacenamiento
+mkdir -p data/qdrant
+
+# descargar imagen (si no la tienes)
+podman pull docker.io/qdrant/qdrant:v1.11.0
+
+# arrancar Qdrant
+podman run -d --name qdrant-local \
+	-p 6333:6333 -p 6334:6334 \
+	-v $(pwd)/data/qdrant:/qdrant/storage:Z \
+	docker.io/qdrant/qdrant:v1.11.0
 ```
 
-3) Ejecutar solo servidores de búsqueda / RAG
-
-Si ya tienes embeddings en Qdrant y quieres exponer el chat o visualización:
-
+Comprobar Qdrant:
 ```bash
-python -m uvicorn src.tools.visual_server:app --host 127.0.0.1 --port 5050
-python -m uvicorn src.tools.rag_chat:app --host 127.0.0.1 --port 5051
+curl http://127.0.0.1:6333/collections | jq .
 ```
 
-## Configuración clave
-
-- `config/settings.yaml`: rutas a `data/raw`, `data/chunks`, `data/embeddings`, y configuración de Qdrant (host/port/collection/vector_size).
-- `urls.txt`: lista de URLs a descargar (una por línea, soporta `#` como comentario).
-
-## Desarrollo y pruebas
-
-- Los tests están en `tests/` y usan `pytest`.
-- Para depurar partes específicas, ejecuta módulos desde la raíz con `python -m src.tools.ingest_one` o importando funciones desde `src/etl`.
-
-## Notas operativas
-
-- El DAG `pdf_etl_local` (archivo `dags/pdf_etl_dag.py`) define cuatro tareas: download → chunk → embed → load_qdrant.
-- Los pasos son idempotentes: si los archivos de salida existen, los pasos se saltan para permitir ejecuciones incrementales.
-- `src/etl/embedder.py` usa `fastembed` con el modelo `BAAI/bge-small-en-v1.5` por defecto (384 dimensiones). Cambia el modelo y `config/settings.yaml` si es necesario.
-
-## Ejecución recomendada si falla la instalación local
-
-- Si la instalación de dependencias locales es complicada (Airflow es pesada), arranca la pila con Docker Compose y usa `docker compose exec` para correr scripts dentro de los contenedores.
-
-Ejemplo:
-
+(Opcional) Levantar la pila completa con Podman Compose
+-------------------------------------------------------
+Si tienes `podman compose` y el archivo `podman-compose.yml`:
 ```bash
-# Ejecutar ingest_one dentro del contenedor (ajusta nombre a tu despliegue)
-docker compose exec airflow-webserver python -m src.tools.ingest_one /opt/airflow/local_library/MiLibro.pdf --settings /opt/airflow/config/settings.yaml
+# exportar UID/GID para evitar problemas de permisos
+export AIRFLOW_UID=$(id -u)
+export AIRFLOW_GID=$(id -g)
+
+# inicializar y levantar
+podman compose -f podman-compose.yml up -d
 ```
 
-## Contacto / próximos pasos
+ETL — Ingestión de libros
+-------------------------
+- Dry-run (solo chunking — no calcula embeddings ni sube a Qdrant):
+```bash
+.venv/bin/python -m src.tools.ingest_books --dry-run
+```
 
-- Para ayudar más, puedo:
-	- Generar un `Makefile` o scripts de convenience para arrancar la pila.
-	- Añadir un `docs/` con diagramas y ejemplos de `settings.yaml`.
-	- Preparar un entorno Docker más ligero para desarrollo (sin Airflow completo).
+- Ingestión completa (calcula embeddings y sube a Qdrant):
+```bash
+.venv/bin/python -m src.tools.ingest_books --collection books_collection
+```
+
+- Ingestar un único archivo (incremental):
+```bash
+.venv/bin/python -m src.tools.ingest_books --collection books_collection --file data/raw/NOMBRE.epub
+```
+
+Notas:
+- El script genera IDs deterministas (UUIDv5) por `source::chunk_index`. Re-ejecutar el ETL no duplica puntos; actualiza los existentes.
+- Por defecto se usa `sentence-transformers` (modelo `all-MiniLM-L6-v2`) para embeddings.
+
+RAG app (FastAPI) — uso local
+-----------------------------
+1. Arrancar servidor (desarrollo):
+```bash
+.venv/bin/python -m uvicorn src.tools.rag_chat:app --host 127.0.0.1 --port 5051 --reload
+```
+2. UI en navegador:
+- Abrir: http://127.0.0.1:5051/ui
+
+Endpoints
+- POST `/api/search` — cuerpo: `{ "text": "...", "top_k": N }`
+	- Devuelve vectores encontrados + metadata y `rerank_score`.
+- POST `/api/chat` — cuerpo: `{ "text": "...", "top_k": N }`
+	- Devuelve: `{ "answer": "...", "contexts": [...], "raw_results": [...] }`
+	- `answer` será generado por LLM (si está configurado) o será un ensamblado de contextos como fallback.
+- GET `/api/point/{id}` — devuelve payload/text almacenado para ese punto.
+- GET `/api/llm_status` — estado del LLM detectado (Ollama/Deepseek/OpenAI).
+
+Interfaz (UI)
+-------------
+La UI tiene 3 columnas:
+- Izquierda: búsqueda y lista de resultados.
+- Centro: detalles / payload del resultado seleccionado (incluye `payload.text` y `payload.page` cuando estén disponibles).
+- Derecha: sección "Respuesta" (respuesta LLM), "Contextos" (fragmentos recuperados) y "Raw Results" (debug).
+
+LLMs: Ollama / Deepseek / OpenAI
+--------------------------------
+La app intenta preferir (en orden):
+1. Ollama local (HTTP/CLI) si está disponible.
+2. Deepseek (cliente remoto) si `USE_DEEPSEEK=1` y `DEEPSEEK_API_KEY` está configurado.
+3. OpenAI si `OPENAI_API_KEY` está en el entorno.
+
+Variables de entorno típicas:
+```bash
+# Ollama no suele requerir clave (si está corriendo local)
+export USE_DEEPSEEK=1
+export DEEPSEEK_API_KEY="..."
+export OPENAI_API_KEY="..."
+```
+
+Depuración rápida
+-----------------
+- Qdrant collections:
+```bash
+curl http://127.0.0.1:6333/collections | jq .
+```
+- Ver logs de uvicorn:
+```bash
+tail -f logs/rag_uvicorn.log
+```
+- Si `GET /api/point/{id}` falla, revisa:
+	- que el id exista en la colección (`qdrant_client.get_point`)
+	- que `payload.text` se haya guardado en la ingest (ingest_books.py guarda `payload.text`)
 
 ---
-
-Documentación generada automáticamente: resumen de las rutas y comandos más usados.
-

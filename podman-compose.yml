@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - "6379:6379"
+
+  qdrant:
+    image: docker.io/qdrant/qdrant:v1.11.0
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./data/qdrant:/qdrant/storage:Z
+
+  airflow-init:
+    image: apache/airflow:2.9.2
+    depends_on:
+      - postgres
+      - redis
+    env_file: .env
+    entrypoint: ["/bin/bash","-c"]
+    command: "airflow db upgrade && airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin || true"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./config:/opt/airflow/config
+
+  airflow-webserver:
+    image: apache/airflow:2.9.2
+    depends_on:
+      - postgres
+      - redis
+      - airflow-init
+    env_file: .env
+    environment:
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://$${POSTGRES_USER}:$${POSTGRES_PASSWORD}@postgres:5432/$${POSTGRES_DB}"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    command: webserver
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.2
+    depends_on:
+      - postgres
+      - redis
+      - airflow-webserver
+    env_file: .env
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    command: scheduler
+
+volumes:
+  postgres_data: {}
+  redis_data: {}
+  qdrant_data: {}

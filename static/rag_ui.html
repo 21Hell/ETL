@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>RAG Chat UI</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; margin: 0; height: 100vh; }
+    .container { display: grid; grid-template-columns: 320px 420px 1fr; gap: 12px; padding: 12px; height: 100%; box-sizing: border-box; }
+    .panel { background: #fff; border: 1px solid #e6e6e6; padding: 12px; overflow: auto; border-radius: 6px; }
+    .panel h3 { margin-top: 0; }
+    .search-input { display:flex; gap:8px; }
+    input[type=text] { flex:1; padding:8px 10px; border:1px solid #ddd; border-radius:4px }
+    button { padding:8px 10px; border-radius:4px; border:1px solid #2b6af6; background:#2b6af6; color:white }
+    .result { padding:8px; border-bottom:1px dashed #eee; cursor:pointer }
+    .result:hover { background:#f7f7ff }
+    .score { float:right; color:#666 }
+    .context { white-space:pre-wrap; font-size:14px }
+    .chat-input { display:flex; gap:8px; margin-top:8px }
+    textarea { width:100%; height:80px; padding:8px; border:1px solid #ddd; border-radius:4px }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="panel" id="left">
+      <h3>Search</h3>
+      <div class="search-input">
+        <input id="query" type="text" placeholder="Escribe tu pregunta..." />
+        <button id="btnSearch">Buscar</button>
+      </div>
+      <div style="margin-top:10px">
+        <label>Top K: <input id="topk" type="number" value="5" min="1" max="50" style="width:64px" /></label>
+      </div>
+      <hr />
+      <div id="results"></div>
+    </div>
+
+    <div class="panel" id="middle">
+      <h3>Related vectors</h3>
+      <div id="detailList">Selecciona un resultado para ver payload</div>
+    </div>
+
+    <div class="panel" id="right">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">RAG output</h3>
+        <div id="llmStatus" style="font-size:13px;color:#666;display:flex;gap:8px;align-items:center">
+          <div id="llmSpinner" style="width:12px;height:12px;border-radius:50%;background:#ddd;animation:none"></div>
+          <div id="llmText">LLM: checking…</div>
+          <button id="llmRetry" style="padding:4px 8px;font-size:12px">Reintentar</button>
+        </div>
+      </div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+        <div>
+          <h4 style="margin:6px 0">Respuesta</h4>
+          <div id="respuesta" class="context">No hay respuesta aún.</div>
+        </div>
+        <div>
+          <h4 style="margin:6px 0">Contextos</h4>
+          <div id="chatContexts" class="context">No hay contextos.</div>
+        </div>
+        <div>
+          <h4 style="margin:6px 0">Raw Results</h4>
+          <pre id="rawResults" class="context">[]</pre>
+        </div>
+        <div id="uiError" style="color:#9b2c2c;font-weight:600"></div>
+      </div>
+
+      <div class="chat-input">
+        <textarea id="chatText" placeholder="Formular pregunta para RAG..."></textarea>
+        <div style="width:120px">
+          <button id="btnChat" style="width:100%">Preguntar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/rag_ui.js"></script>
+</body>
+</html>

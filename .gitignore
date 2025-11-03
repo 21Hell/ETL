@@ -1,0 +1,79 @@
+
+# Python virtualenvs
+.venv/
+venv/
+env/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Pyright / mypy
+.mypy_cache/
+
+# Jupyter
+.ipynb_checkpoints
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and runtime files
+logs/
+*.log
+run/*.pid
+
+# Data folders (large / generated artifacts)
+data/qdrant/
+data/embeddings/
+data/chunks/
+data/postgres/
+data/redis/
+
+# Local sqlite or DB files
+*.db
+*.sqlite3
+
+# Environment files / secrets
+.env
+.env.*
+secrets.yaml
+
+# Node
+node_modules/
+
+# Misc
+.cache/
+*.bak
+*.swp
+
+# Ollama / local model artifacts (if present)
+.ollama/
+models/
+
