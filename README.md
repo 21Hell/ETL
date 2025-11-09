@@ -14,6 +14,23 @@ Contenido clave
 - `data/raw/` — documentos fuente
 - `data/chunks/` — resultados chunk/parquet
 - `data/qdrant/` — volumen persistente para Qdrant (si se usa local)
+#!/usr/bin/env bash
+
+# ETL — Pipeline de ingestión y RAG UI
+
+Resumen
+-------
+Este repositorio implementa un pipeline ETL para documentos (PDF/EPUB), generación de chunks, cálculo de embeddings y carga en Qdrant. Además incluye una pequeña aplicación RAG (FastAPI) con una UI web (3 columnas) para búsqueda semántica, visualización de fragmentos y generación de respuestas con LLMs (Ollama, Deepseek, OpenAI).
+
+Contenido clave
+---------------
+- `src/etl/` — módulos ETL (chunking, utilidades)
+- `src/tools/ingest_books.py` — script para ingestar libros (soporta `--file`, `--dry-run`)
+- `src/tools/rag_chat.py` — FastAPI app: `/api/search`, `/api/chat`, `/api/point/{id}`, `/api/llm_status`, `/ui`
+- `static/` — frontend (HTML/JS) con 3 columnas: Search | Related vectors | RAG output
+- `data/raw/` — documentos fuente
+- `data/chunks/` — resultados chunk/parquet
+- `data/qdrant/` — volumen persistente para Qdrant (si se usa local)
 - `podman-compose.yml` — orquestación (si está presente)
 
 Requisitos (local)
@@ -147,3 +164,10 @@ tail -f logs/rag_uvicorn.log
 	- que `payload.text` se haya guardado en la ingest (ingest_books.py guarda `payload.text`)
 
 ---
+
+Versión: 2025-11-02
+
+Licencia
+--------
+Este proyecto se distribuye bajo la licencia GNU General Public License v2 (GPLv2).
+Consulta el archivo `LICENSE` en la raíz del repositorio para el texto completo de la licencia.
