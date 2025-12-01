@@ -171,9 +171,5 @@ Este proyecto se distribuye bajo la licencia GNU General Public License v2 (GPLv
 Consulta el archivo `LICENSE` en la raíz del repositorio para el texto completo de la licencia.
 =======
 
-
-
-
-
-
->>>>>>> 33074e5ed019ea842e5134a1d3cf20c98d0f10e8
+[cc-by-shield]: https://licensebuttons.net/l/by/4.0/88x31.png
+[cc-by]: https://creativecommons.org/licenses/by/4.0/
