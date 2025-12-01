@@ -1,4 +1,4 @@
-[![CC BY 4.0][cc-by-shield]][cc-by]
+
 # ETL — Pipeline de ingestión y RAG UI
 
 Resumen
